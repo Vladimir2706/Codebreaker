@@ -93,10 +93,8 @@ module Codebreaker
     end
 
     describe '#use_hint' do
-
       context 'when hints > 0' do
         it 'decrement hints by 1' do
-
           allow(game).to receive(:show_hint)
           expect { game.use_hint }.to change { game.instance_variable_get('@hints') }.by(-1)
         end
@@ -116,7 +114,6 @@ module Codebreaker
       it 'show number, which absent in guess_code' do
         expect(game.show_hint('1257')).to eql('5'). or eql('7')
       end
-
     end
   end
 end
