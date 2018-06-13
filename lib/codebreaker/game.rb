@@ -32,9 +32,31 @@ module Codebreaker
     end
 
     def start
-      validate_input
-      compare_codes
-      show_result_of_comparing
+      if @attempts > 0
+        do_attempt # add to rspec
+        validate_input
+        compare_codes
+        show_result_of_comparing
+        loose?
+      end
+    end
+
+    def win?
+      if @result_of_comparing = '++++' then show_win_message
+      end
+    end
+
+    def loose?
+      if @attempts = 0 then show_loose_message end
+    end
+
+    def show_win_message
+      # Show win messahe
+    end
+
+    def show_loose_message
+      # show loose message
+      # exit to start_menu
     end
 
     def do_attempt

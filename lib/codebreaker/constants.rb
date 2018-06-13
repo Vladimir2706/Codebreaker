@@ -11,4 +11,6 @@ module Codebreaker
                3 - Back to the start menu\n"
 
   GOODBUY_MESSAGE = 'Goodbuy!'
+
+  QUESTION_FOR_HINT = "Do you want to use hint?"
 end

@@ -28,9 +28,28 @@ module Codebreaker
       start_menu
     end
 
+    def play_game
+      input
+      @game.start
+      @game.win? 
+    end
+
+    def ask_for_hint
+      QUESTION_FOR_HINT
+      case help = input
+      when 'y'
+        @game.use_hint
+      when 'n'
+        play_game
+      else
+        puts "Please, give the correct answer"
+      end
+    end
+
     def validate_user_name(input)
       raise ArgumentError, 'Username is too short' unless input.length < 3
       raise ArgumentError, 'Username is too long' unless input.length > 25
+      raise ArgumentError, 'Username should be onle from Alphabets letters and numbers' if input =~ /^[\w\s]/
     end
 
     def goodbuy

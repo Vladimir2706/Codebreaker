@@ -69,7 +69,11 @@ module Codebreaker
         end
         it 'User name is too long' do
           interface.instance_variable_set('@username', 'Be')
-          expect{interface.validate_user_name('John128473Good12y43t213')}.to raise_error(ArgumentError)
+          expect{ interface.validate_user_name('John128473Good12y43t213') }.to raise_error(ArgumentError)
+        end
+        it 'User name contain wrong symbols' do
+          interface.instance_variable_set('@username', 'Jarvi$')
+          expect{ interface.validate_user_name('John128473Good12y43t213') }.to raise_error(ArgumentError)
         end
       end
     end
