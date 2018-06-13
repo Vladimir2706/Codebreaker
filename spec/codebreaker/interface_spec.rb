@@ -46,8 +46,31 @@ module Codebreaker
     end
 
     describe '#set_user_name' do
-      it 'User name should equal to rools' do
-        expect(interface.instance_variable_get(:@username)).to match(/^[\w\s]{3,25}\z/)
+
+      context 'Username is correct' do
+        it 'User name only from letters' do
+          interface.instance_variable_set('@username', 'Tony Stark')
+          expect(interface.instance_variable_get(:@username)).to match(/^[\w\s]{3,25}\z/)
+        end
+        it 'User name only from numbers' do
+          interface.instance_variable_set('@username', '123234 4534')
+          expect(interface.instance_variable_get(:@username)).to match(/^[\w\s]{3,25}\z/)
+        end
+        it 'User name from letters and numbers' do
+          interface.instance_variable_set('@username', 'John4534')
+          expect(interface.instance_variable_get(:@username)).to match(/^[\w\s]{3,25}\z/)
+        end
+      end
+
+      context 'Username is wrong' do
+        it 'User name is too short' do
+          interface.instance_variable_set('@username', 'Be')
+          expect{interface.validate_user_name('Be')}.to raise_error(ArgumentError)
+        end
+        it 'User name is too long' do
+          interface.instance_variable_set('@username', 'Be')
+          expect{interface.validate_user_name('John128473Good12y43t213')}.to raise_error(ArgumentError)
+        end
       end
     end
 

@@ -23,8 +23,14 @@ module Codebreaker
 
     def set_user_name
       input
+      validate_user_name
       @username = input
       start_menu
+    end
+
+    def validate_user_name(input)
+      raise ArgumentError, 'Username is too short' unless input.length < 3
+      raise ArgumentError, 'Username is too long' unless input.length > 25
     end
 
     def goodbuy
