@@ -1,3 +1,7 @@
+require_relative 'game'
+require_relative 'constants'
+require 'pry'
+
 module Codebreaker
   class Interface
     def initialize
@@ -22,34 +26,43 @@ module Codebreaker
     end
 
     def set_user_name
-      input
-      validate_user_name
-      @username = input
-      start_menu
+      puts "Please, write your name"
+      name = input
+      validate_user_name(name)
+      @username = name
+      return start_menu
     end
 
     def play_game
-      input
-      @game.start
-      @game.win? 
+      puts 'Please, write your code'
+      until @game.loose?
+        user_suggested_code = input
+        @game.start(user_suggested_code)
+        @game.show_secret_code
+        @game.win? ? show_win_message : ask_for_hint
+      end
+      show_loose_message
+      start_menu
     end
 
     def ask_for_hint
-      QUESTION_FOR_HINT
+      puts QUESTION_FOR_HINT
       case help = input
       when 'y'
         @game.use_hint
+        binding.pry
+        play_game
       when 'n'
         play_game
       else
         puts "Please, give the correct answer"
+        ask_for_hint
       end
     end
 
-    def validate_user_name(input)
-      raise ArgumentError, 'Username is too short' unless input.length < 3
-      raise ArgumentError, 'Username is too long' unless input.length > 25
-      raise ArgumentError, 'Username should be onle from Alphabets letters and numbers' if input =~ /^[\w\s]/
+    def validate_user_name(name)
+      raise ArgumentError, 'Username is too short' unless input =~ /^{3,25}$/
+      raise ArgumentError, 'Username should be onle from Alphabets letters and numbers' if input =~ /^[\w\s]$/
     end
 
     def goodbuy
@@ -66,6 +79,15 @@ module Codebreaker
 
     def show_start_menu
       puts START_MENU
+    end
+
+    def show_loose_message
+      puts 'Try again! :('
+    end
+
+    def show_win_message
+      puts '!!!CONGRATULATIONS!!!'
+      start_menu
     end
 
     # def game_menu
