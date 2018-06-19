@@ -65,17 +65,41 @@ module Codebreaker
       context 'Username is wrong' do
         it 'User name is too short' do
           interface.instance_variable_set('@username', 'Be')
-          expect{interface.validate_user_name('Be')}.to raise_error(ArgumentError)
+          expect{interface.validate_user_name}.to raise_error(ArgumentError)
         end
         it 'User name is too long' do
-          interface.instance_variable_set('@username', 'Be')
-          expect{ interface.validate_user_name('John128473Good12y43t213') }.to raise_error(ArgumentError)
+          interface.instance_variable_set('@username', 'John128473Good12y43t213dfdfgsd')
+          expect{ interface.validate_user_name }.to raise_error(ArgumentError)
         end
-        it 'User name contain wrong symbols' do
+        skip 'User name contain wrong symbols' do
           interface.instance_variable_set('@username', 'Jarvi$')
           expect{ interface.validate_user_name('John128473Good12y43t213') }.to raise_error(ArgumentError)
         end
       end
+    end
+
+    describe '#play_game' do
+
+    end
+
+    describe '#ask_for_hint' do
+
+    end
+
+    describe '#validate_user_name' do
+
+    end
+
+    describe '#goodbuy' do
+
+    end
+
+    describe '#greeting' do
+
+    end
+
+    describe '#show_start_menu' do
+
     end
 
     # describe '#game_process' do

@@ -5,8 +5,13 @@ module Codebreaker
     let(:game) { Game.new }
 
     describe '#initialize' do
+      before { game.generate_code }
       it 'create secret code with numbers from 1 to 6' do
         expect(game.instance_variable_get(:@secret_code)).to match(/^[1-6]{4}$/)
+      end
+
+      it 'have 7 attempts' do
+        expect(game.instance_variable_get(:@attempts)).to eql 10
       end
     end
 
@@ -26,69 +31,83 @@ module Codebreaker
 
     describe '#compare_codes' do
       before { game.instance_variable_set('@secret_code', '1234') }
+      # around(:each) { game.compare_codes }
 
       context 'giving right count of "+"' do
         it 'show "+"' do
-          expect(game.compare_codes('1789')).to eql('+')
+          game.instance_variable_set('@user_suggested_code', '1566')
+          expect(game.compare_codes).to eql('+')
         end
 
         it 'show "++"' do
-          expect(game.compare_codes('1289')).to eql('++')
+          game.instance_variable_set('@user_suggested_code', '1289')
+          expect(game.compare_codes).to eql('++')
         end
 
         it 'show "+++"' do
-          expect(game.compare_codes('1239')).to eql('+++')
+          game.instance_variable_set('@user_suggested_code', '1239')
+          expect(game.compare_codes).to eql('+++')
         end
 
         it 'show "++++"' do
-          expect(game.compare_codes('1234')).to eql('++++')
+          game.instance_variable_set('@user_suggested_code', '1234')
+          expect(game.compare_codes).to eql('++++')
         end
       end
 
       context 'giving right count of "-"' do
         it 'show "-"' do
-          expect(game.compare_codes('7891')).to eql('-')
+          game.instance_variable_set('@user_suggested_code', '7891')
+          expect(game.compare_codes).to eql('-')
         end
 
         it 'show "--"' do
-          expect(game.compare_codes('7821')).to eql('--')
+          game.instance_variable_set('@user_suggested_code', '7821')
+          expect(game.compare_codes).to eql('--')
         end
 
         it 'show "---"' do
-          expect(game.compare_codes('7321')).to eql('---')
+          game.instance_variable_set('@user_suggested_code', '7321')
+          expect(game.compare_codes).to eql('---')
         end
 
         it 'show "----"' do
-          expect(game.compare_codes('4321')).to eql('----')
+          game.instance_variable_set('@user_suggested_code', '4321')
+          expect(game.compare_codes).to eql('----')
         end
       end
 
       context 'giving right combination of "+" and "-"' do
         it 'show "+-"' do
-          expect(game.compare_codes('1745')).to eql('+-')
+          game.instance_variable_set('@user_suggested_code', '1745')
+          expect(game.compare_codes).to eql('+-')
         end
 
         it 'show "+--"' do
-          expect(game.compare_codes('4253')).to eql('+--')
+          game.instance_variable_set('@user_suggested_code', '4253')
+          expect(game.compare_codes).to eql('+--')
         end
 
         it 'show "+---"' do
-          expect(game.compare_codes('3124')).to eql('+---')
+          game.instance_variable_set('@user_suggested_code', '3124')
+          expect(game.compare_codes).to eql('+---')
         end
 
         it 'show "++-"' do
-          expect(game.compare_codes('1245')).to eql('++-')
+          game.instance_variable_set('@user_suggested_code', '1245')
+          expect(game.compare_codes).to eql('++-')
         end
 
         it 'show "++--"' do
-          expect(game.compare_codes('1243')).to eql('++--')
+          game.instance_variable_set('@user_suggested_code', '1243')
+          expect(game.compare_codes).to eql('++--')
         end
       end
     end
 
-    describe '#do_attempt' do
+    describe '#decrease_attempts' do
       it 'decrement attempts by 1' do
-        expect { game.do_attempt }.to change { game.instance_variable_get('@attempts') }.by(-1)
+        expect { game.decrease_attempts }.to change { game.instance_variable_get('@attempts') }.by(-1)
       end
     end
 
@@ -111,9 +130,29 @@ module Codebreaker
     describe '#show_hint' do
       before { game.instance_variable_set('@secret_code', '1234') }
 
-      it 'show number, which absent in guess_code' do
-        expect(game.show_hint('1257')).to eql('5'). or eql('7')
+      skip 'show number, which absent in guess_code' do
+        expect(game.show_hint('1257')).to eql('3'). or eql('4')
       end
+    end
+
+    describe '#start' do
+
+    end
+
+    describe '#win?' do
+
+    end
+
+    describe '#loose?' do
+
+    end
+
+    describe '#show_win_message' do
+
+    end
+
+    describe '#show_loose_message' do
+
     end
   end
 end
