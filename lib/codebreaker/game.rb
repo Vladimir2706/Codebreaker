@@ -3,8 +3,6 @@ require_relative 'constants'
 # require 'pry'
 
 module Codebreaker
-  ABSENT_HITNS_MESSAGE = 'Sorry, you have no hints'
-
   class Game
     attr_reader :attempts, :hints, :result_of_comparing
 
@@ -12,12 +10,13 @@ module Codebreaker
       @secret_code = ''
       @user_suggested_code = ''
       @result_of_comparing = ''
-      @attempts = 10
+      @attempts = 1
       @hints = 10
       generate_code
     end
 
-    def generate_code # absent in rspec, becouse generated code check in initialize
+    # absent in rspec, becouse generated code check in initialize
+    def generate_code
       @secret_code = (1..4).map { rand(1..6) }.join
     end
 
@@ -41,13 +40,11 @@ module Codebreaker
 
     def start(user_suggested_code)
       @user_suggested_code = user_suggested_code
-      if @attempts > 0
-        decrease_attempts
-        validate_input(user_suggested_code)
-        compare_codes
-        # binding.pry
-        show_result_of_comparing
-      end
+      decrease_attempts
+      validate_input(user_suggested_code)
+      compare_codes
+      # binding.pry
+      show_result_of_comparing
     end
 
     def win?
@@ -56,10 +53,6 @@ module Codebreaker
 
     def loose?
       @attempts.zero?
-    end
-
-    def show_win_message
-      # Show win messahe
     end
 
     def decrease_attempts

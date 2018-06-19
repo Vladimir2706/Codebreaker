@@ -31,7 +31,6 @@ module Codebreaker
 
     describe '#compare_codes' do
       before { game.instance_variable_set('@secret_code', '1234') }
-      # around(:each) { game.compare_codes }
 
       context 'giving right count of "+"' do
         it 'show "+"' do
@@ -136,23 +135,39 @@ module Codebreaker
     end
 
     describe '#start' do
+      before do
+        game.start('1234')
+      end
 
+      it 'use right user suggested code' do
+        expect { game.instance_variable_get('@user_suggested_code').to eql(:input) }
+      end
     end
 
     describe '#win?' do
+      it 'return true if gode guessed' do
+        game.instance_variable_set('@result_of_comparing', '++++')
+        expect(game.win?).to be(true)
+      end
 
+      it 'return false if gode not_guessed' do
+        game.instance_variable_set('@result_of_comparing', '+++-')
+        expect(game.win?).to be(false)
+      end
     end
 
     describe '#loose?' do
+      it 'return true if attempts is end' do
+        game.instance_variable_set('@attempts', 0)
+        expect(game.loose?).to be(true)
+      end
 
+      it 'return false if attempts isn\'t end' do
+        game.instance_variable_set('@attempts', 5)
+        expect(game.loose?).to be(false)
+      end
     end
 
-    describe '#show_win_message' do
-
-    end
-
-    describe '#show_loose_message' do
-
-    end
+    # how to check puts for show_result_of_comparing and show_secret_code
   end
 end
