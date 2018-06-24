@@ -17,42 +17,47 @@ module Codebreaker
 
     def start_menu
       show_start_menu
-      case guess = input
+      case _guess = input
       when '1' then set_user_name
       when '2' then play_game
       when '3' then show_score
-      when '4' then goodbuy
+      when '4' then show_rools
+      when '5' then goodbuy
       else puts 'Incorrect'
       end
     end
 
     def set_user_name
-      puts "Please, write your name"
-      # name = input
+      puts "\nPlease, write your name"
       @username = input
       validate_user_name
-      return start_menu
+      puts "\n Username \"#{@username}\" was succesfully set up!"
+      start_menu
     end
 
     def play_game
-      puts 'Please, write your code'
+      remainder_of_hints_and_attempts
+      puts "\nPlease, write your code"
       until @game.loose?
         user_suggested_code = input
         @game.start(user_suggested_code)
-        # binding.pry
-        @game.show_secret_code
-        @game.win? ? show_win_message : ask_for_hint
+        if @game.win?
+          show_win_message
+          end_game
+        elsif @game.loose?
+          show_loose_message
+          end_game
+        else
+          ask_for_hint
+        end
       end
-      show_loose_message
-      initialize_game
     end
 
     def ask_for_hint
       puts QUESTION_FOR_HINT
-      case help = input
+      case _help = input.downcase
       when 'y'
         @game.use_hint
-        # binding.pry
         play_game
       when 'n'
         play_game
@@ -62,19 +67,36 @@ module Codebreaker
       end
     end
 
+    def ask_for_new_game
+      puts QUESTION_FOR_NEW_GAME
+      case _help = input.downcase
+      when 'y'
+        initialize_game
+      when 'n'
+        goodbuy
+      else
+        puts "\nPlease, give the correct answer"
+        ask_for_new_game
+      end
+    end
+
     def validate_user_name
       raise ArgumentError, 'Username is too short' if @username.length < 3 # /^{3,25}$/
       raise ArgumentError, 'Username is too long' if @username.length > 25 # /^{3,25}$/
-      # raise ArgumentError, 'Username should be onle from Alphabets letters and numbers' if @username.match /^[\w\s]$/
+    end
+
+    def remainder_of_hints_and_attempts
+      print "\nYou have #{@game.instance_variable_get(:@attempts)} attempts"
+      print " and #{@game.instance_variable_get(:@hints)} hints.\n"
     end
 
     def goodbuy
-      puts 'Goodbuy'
+      puts GOODBUY_MESSAGE
       exit
     end
 
     def input
-      gets.chomp.strip.downcase
+      gets.chomp.strip
     end
 
     def greeting
@@ -86,14 +108,17 @@ module Codebreaker
     end
 
     def show_loose_message
-      puts 'Try again! :('
+      puts LOOSE_MESSAGE
+    end
+
+    def end_game
+      @game.count_score
+      save_game_data_to_yaml
+      ask_for_new_game
     end
 
     def show_win_message
-      puts '!!!CONGRATULATIONS!!!'
-      save_game_data_to_yaml
-      # write_to_yaml
-      initialize_game
+      puts CONGRATULATIONS
     end
 
     def save_game_data_to_yaml(file_name = 'scores_table.yaml')
@@ -107,20 +132,13 @@ module Codebreaker
     def collect_game_data
       @game_data = {
         Username: @username,
+        Score: @game.instance_variable_get(:@score),
         Remaining_attempts: @game.instance_variable_get(:@attempts),
         Remaining_hints: @game.instance_variable_get(:@hints),
         Secret_cod_of_game: @game.instance_variable_get(:@secret_code),
         Date: "#{DateTime.now.strftime("%d/%m/%Y %H:/%M")}"
       }
     end
-
-    # def write_to_yaml(file_name = 'scores_table.yaml')
-    #   collect_game_data
-    #   File.new(file_name, 'a') unless File.exist?(file_name)
-    #   File.open(file_name, 'a') do |file|
-    #     YAML.dump(@game_data, file)
-    #   end
-    # end
 
     def read_from_yaml(file_name = 'scores_table.yaml')
       if File.exist?(file_name)
@@ -136,6 +154,11 @@ module Codebreaker
 
     def show_score
       read_from_yaml
+      start_menu
+    end
+
+    def show_rools
+      puts ROOLS
       start_menu
     end
   end
