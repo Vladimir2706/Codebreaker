@@ -31,8 +31,6 @@ module Codebreaker
       @attempts.zero?
     end
 
-    private
-
     def generate_code
       @secret_code = (1..4).map { rand(1..6) }.join
     end
