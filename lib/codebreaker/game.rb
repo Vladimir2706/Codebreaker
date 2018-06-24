@@ -9,13 +9,30 @@ module Codebreaker
     def initialize
       @secret_code = ''
       @user_suggested_code = ''
-      @result_of_comparing = ''
-      @attempts = 1
-      @hints = 10
+      @attempts = 5
+      @hints = 2
+      @score = 0
       generate_code
     end
 
-    # absent in rspec, becouse generated code check in initialize
+    def start(user_suggested_code)
+      @user_suggested_code = user_suggested_code
+      decrease_attempts
+      validate_input(user_suggested_code)
+      compare_codes
+      show_result_of_comparing
+    end
+
+    def win?
+      @result_of_comparing == '++++'
+    end
+
+    def loose?
+      @attempts.zero?
+    end
+
+    private
+
     def generate_code
       @secret_code = (1..4).map { rand(1..6) }.join
     end
@@ -26,33 +43,29 @@ module Codebreaker
     end
 
     def compare_codes
-      @result_of_comparing = ''
-      @secret_code.each_char.with_index do |number, index|
-        if number == @user_suggested_code[index]
-          @result_of_comparing << '+'
-        elsif @user_suggested_code.include?(number)
-          @result_of_comparing << '-'
+      @secret_code_for_comparing = @secret_code.dup
+      4.times { |i|
+        if @secret_code_for_comparing[i] == @user_suggested_code[i]
+          @secret_code_for_comparing[i] = '$'
+          @user_suggested_code[i] = '+'
         end
-        @result_of_comparing = @result_of_comparing.chars.sort.join
-      end
-      @result_of_comparing
+      }
+      4.times { |i|
+        if @secret_code_for_comparing.include?(@user_suggested_code[i])
+          @secret_code_for_comparing.sub!(@user_suggested_code[i], '$')
+          @user_suggested_code[i] = '-'
+        end
+      }
+      4.times { |i|
+        if /[\d]/ =~ @user_suggested_code[i]
+          @user_suggested_code[i] = ' '
+        end
+      }
+      @result_of_comparing = @user_suggested_code.dup
     end
 
-    def start(user_suggested_code)
-      @user_suggested_code = user_suggested_code
-      decrease_attempts
-      validate_input(user_suggested_code)
-      compare_codes
-      # binding.pry
-      show_result_of_comparing
-    end
-
-    def win?
-      @result_of_comparing == '++++'
-    end
-
-    def loose?
-      @attempts.zero?
+    def count_score
+      @score = @attempts * 10 + @hints * 15
     end
 
     def decrease_attempts
@@ -70,11 +83,7 @@ module Codebreaker
     end
 
     def show_result_of_comparing
-      puts @result_of_comparing
-    end
-
-    def show_secret_code
-      puts @secret_code
+      puts @user_suggested_code
     end
   end
 end
