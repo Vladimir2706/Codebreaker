@@ -3,6 +3,7 @@ require 'spec_helper'
 module Codebreaker
   RSpec.describe Interface do
     let(:interface) { Interface.new }
+    let(:game) { Game.new }
 
     describe '#initialize_game' do
       before do
@@ -33,14 +34,16 @@ module Codebreaker
         allow(interface).to receive(:input).and_return('2')
         expect(interface).to receive(:play_game).with(no_args)
       end
-
       it 'show skore' do
         allow(interface).to receive(:input).and_return('3')
         expect(interface).to receive(:show_score).with(no_args)
       end
-
-      it 'show goodbuy-message and exit game' do
+      it 'show skore' do
         allow(interface).to receive(:input).and_return('4')
+        expect(interface).to receive(:show_rools).with(no_args)
+      end
+      it 'show goodbuy-message and exit game' do
+        allow(interface).to receive(:input).and_return('5')
         expect(interface).to receive(:goodbuy).with(no_args)
       end
     end
@@ -71,71 +74,31 @@ module Codebreaker
           interface.instance_variable_set('@username', 'John128473Good12y43t213dfdfgsd')
           expect{ interface.validate_user_name }.to raise_error(ArgumentError)
         end
-        skip 'User name contain wrong symbols' do
-          interface.instance_variable_set('@username', 'Jarvi$')
-          expect{ interface.validate_user_name('John128473Good12y43t213') }.to raise_error(ArgumentError)
-        end
       end
     end
 
-    describe '#play_game' do
-
-    end
-
-    describe '#ask_for_hint' do
-
-    end
-
-    describe '#validate_user_name' do
-
+    describe '#show_loose_message' do
+      it 'show loose_message' do
+        expect { interface.show_loose_message }.to output("\nDon't get upset! Try one more time!\n").to_stdout
+      end
     end
 
     describe '#goodbuy' do
+      before { allow(interface).to receive(:exit) }
 
+      it 'show goodbuy' do
+        expect { interface.goodbuy }.to output("\nGoodbuy! Thanks for good game!\n").to_stdout
+      end
+      it 'exit in the end' do
+        expect(interface).to receive(:exit).with(no_args)
+        interface.goodbuy
+      end
     end
 
     describe '#greeting' do
-
+      it 'show greeting' do
+        expect { interface.greeting }.to output("\nWelcome to the Codebreaker!\n").to_stdout
+      end
     end
-
-    describe '#show_start_menu' do
-
-    end
-
-    # describe '#game_process' do
-    #   before do
-    #     allow(interface).to receive(:game_menu)
-    #     allow(interface).to receive(:play_game)
-    #   end
-    #   after { interface.game_process }
-    #
-    #   it { expect(interface).to receive(:game_menu).with(no_args) }
-    #   it { expect(interface).to receive(:play_game).with(no_args) }
-    # end
-
-    # describe '#game_menu' do
-    #   before do
-    #     allow(interface).to receive(:show_game_menu)
-    #     allow(interface).to receive(:set_user_name)
-    #     allow(interface).to receive(:play_game)
-    #     allow(interface).to receive(:start_menu)
-    #   end
-    #   after {interface.game_menu}
-    #
-    #   it 'set user name' do
-    #     allow(interface).to receive(:input).and_return('1')
-    #     expect(interface).to receive(:set_user_name).with(no_args)
-    #   end
-    #
-    #   it 'start palying game' do
-    #     allow(interface).to receive(:input).and_return('2')
-    #     expect(interface).to receive(:play_game).with(no_args)
-    #   end
-    #
-    #   it 'back to start menu' do
-    #     allow(interface).to receive(:input).and_return('3')
-    #     expect(interface).to receive(:start_menu).with(no_args)
-    #   end
-    # end
   end
 end
